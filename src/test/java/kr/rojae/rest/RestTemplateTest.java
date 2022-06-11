@@ -1,7 +1,7 @@
 package kr.rojae.rest;
 
 import kr.rojae.rest.http.HttpHeader;
-import kr.rojae.rest.http.HttpRestTemplate;
+import kr.rojae.rest.http.RestProvider;
 import kr.rojae.rest.model.Comment;
 import kr.rojae.rest.model.Person;
 import kr.rojae.rest.model.PersonEnrollResponse;
@@ -13,19 +13,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
 import java.util.Arrays;
+import java.util.Collections;
 
 @SpringBootTest
 @Slf4j
 public class RestTemplateTest {
 
     @Autowired
+    private RestProvider restProvider;
+
+    @Autowired
     private ApiProp apiProp;
 
     @Test
     public void getTest1(){
-        HttpRestTemplate restTemplate = new HttpRestTemplate(HttpMethod.GET, apiProp.getUrl1);
-        ResponseEntity<Person[]> response = restTemplate.send(Person[].class);
+        ResponseEntity<Person[]> response = restProvider.send(HttpMethod.GET, apiProp.getUrl1, Person[].class);
         Person[] persons = response.getBody();
         assert persons != null;
         Arrays.stream(persons).forEach(p -> log.info(
@@ -35,9 +41,10 @@ public class RestTemplateTest {
 
     @Test
     public void getTest2(){
-        HttpRestTemplate restTemplate = new HttpRestTemplate(HttpMethod.GET, apiProp.getUrl2, new HttpHeader(MediaType.APPLICATION_JSON));
-        restTemplate.addParam("postId", "1");
-        ResponseEntity<Comment[]> response = restTemplate.send(Comment[].class);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.put("postId", Collections.singletonList("1"));
+
+        ResponseEntity<Comment[]> response = restProvider.send(HttpMethod.GET, apiProp.getUrl2, params, new HttpHeader(MediaType.APPLICATION_JSON), Comment[].class);
         Comment[] comments = response.getBody();
         assert comments != null;
         Arrays.stream(comments).forEach(c -> log.info(
@@ -47,9 +54,10 @@ public class RestTemplateTest {
 
     @Test
     public void postTest1(){
-        HttpRestTemplate restTemplate = new HttpRestTemplate(HttpMethod.POST, apiProp.postUrl, new HttpHeader(MediaType.APPLICATION_JSON));
-        restTemplate.addParam("body", "bodyValue...");
-        ResponseEntity<PersonEnrollResponse> response = restTemplate.send(PersonEnrollResponse.class);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.put("postId", Collections.singletonList("bodyValue..."));
+
+        ResponseEntity<PersonEnrollResponse> response = restProvider.send(HttpMethod.POST, apiProp.postUrl, params, new HttpHeader(MediaType.APPLICATION_JSON), PersonEnrollResponse.class);
         PersonEnrollResponse data = response.getBody();
         assert data != null;
         log.info(data.toString());
@@ -57,8 +65,7 @@ public class RestTemplateTest {
 
     @Test
     public void putTest1(){
-        HttpRestTemplate restTemplate = new HttpRestTemplate(HttpMethod.PUT, apiProp.putUrl, new HttpHeader(MediaType.APPLICATION_JSON));
-        ResponseEntity<PersonEnrollResponse> response = restTemplate.send(PersonEnrollResponse.class);
+        ResponseEntity<PersonEnrollResponse> response = restProvider.send(HttpMethod.PUT, apiProp.putUrl, new HttpHeader(MediaType.APPLICATION_JSON), PersonEnrollResponse.class);
         PersonEnrollResponse data = response.getBody();
         assert data != null;
         log.info(data.toString());
@@ -66,8 +73,7 @@ public class RestTemplateTest {
 
     @Test
     public void patchTest1(){
-        HttpRestTemplate restTemplate = new HttpRestTemplate(HttpMethod.PATCH, apiProp.patchUrl, new HttpHeader(MediaType.APPLICATION_JSON));
-        ResponseEntity<Person> response = restTemplate.send(Person.class);
+        ResponseEntity<Person> response = restProvider.send(HttpMethod.PATCH, apiProp.patchUrl, new HttpHeader(MediaType.APPLICATION_JSON), Person.class);
         Person data = response.getBody();
         assert data != null;
         log.info(data.toString());
@@ -75,8 +81,7 @@ public class RestTemplateTest {
 
     @Test
     public void deleteTest1(){
-        HttpRestTemplate restTemplate = new HttpRestTemplate(HttpMethod.DELETE, apiProp.deleteUrl, new HttpHeader(MediaType.APPLICATION_JSON));
-        restTemplate.send(PersonEnrollResponse.class);
+        ResponseEntity<PersonEnrollResponse> response = restProvider.send(HttpMethod.DELETE, apiProp.deleteUrl, new HttpHeader(MediaType.APPLICATION_JSON), PersonEnrollResponse.class);
     }
 
 }
