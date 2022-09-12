@@ -68,7 +68,7 @@ public class HttpRestTemplate {
             return restTemplate.getForEntity(uriBuilder.toUriString(), responseClassType);
         }
         else if(this.httpClient.getMethod().equals(HttpMethod.POST)){
-            return restTemplate.postForEntity(this.httpClient.getUrl(), this.httpClient.getParams(), responseClassType);
+            return restTemplate.exchange(this.httpClient.getUrl(), HttpMethod.POST, this.httpClient.toEntity(), responseClassType);
         }
         else if(this.httpClient.getMethod().equals(HttpMethod.PUT)){
             return restTemplate.exchange(this.httpClient.getUrl(), HttpMethod.PUT, this.httpClient.toEntity(), responseClassType);
