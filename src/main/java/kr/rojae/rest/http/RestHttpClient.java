@@ -10,30 +10,30 @@ import org.springframework.util.MultiValueMap;
 import java.util.Map;
 
 @Getter
-public class HttpClient {
+public class RestHttpClient {
     private HttpMethod method;
     private String url;
     private MultiValueMap<String, String> params;
     private HttpHeader headers;
 
-    public HttpClient(@NonNull HttpMethod method, @NonNull String url){
+    public RestHttpClient(@NonNull HttpMethod method, @NonNull String url){
         this.method = method;
         this.url = url;
     }
 
-    public HttpClient(@NonNull HttpMethod method, @NonNull String url, MultiValueMap<String, String> params){
+    public RestHttpClient(@NonNull HttpMethod method, @NonNull String url, MultiValueMap<String, String> params){
         this.method = method;
         this.url = url;
         this.params = params;
     }
 
-    public HttpClient(@NonNull HttpMethod method, @NonNull String url, HttpHeader headers){
+    public RestHttpClient(@NonNull HttpMethod method, @NonNull String url, HttpHeader headers){
         this.method = method;
         this.url = url;
         this.headers = headers;
     }
 
-    public HttpClient(@NonNull HttpMethod method, @NonNull String url, MultiValueMap<String, String> params, HttpHeader headers){
+    public RestHttpClient(@NonNull HttpMethod method, @NonNull String url, MultiValueMap<String, String> params, HttpHeader headers){
         this.method = method;
         this.url = url;
         this.params = params;
